@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "corsheaders",
+    "django_neomodel",
     "QueryApp.apps.QueryappConfig",
     "ManagementApp.apps.ManagementappConfig",
     "DemoApp.apps.DemoappConfig",
