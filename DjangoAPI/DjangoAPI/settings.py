@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "QueryApp.apps.QueryappConfig",
     "ManagementApp.apps.ManagementappConfig",
+    "DemoApp.apps.DemoappConfig",
     "rest_framework",
 ]
 
