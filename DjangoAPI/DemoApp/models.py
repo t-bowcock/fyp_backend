@@ -25,7 +25,7 @@ class Person(neomodel.StructuredNode):
 
 
 class ActedInRel(neomodel.StructuredRel):
-    roles = neomodel.ArrayProperty(neomodel.StringProperty)
+    roles = neomodel.ArrayProperty(neomodel.StringProperty())
 
 
 class ReviewedRel(neomodel.StructuredRel):
