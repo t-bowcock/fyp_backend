@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     "django_neomodel",
     "QueryApp.apps.QueryappConfig",
     "ManagementApp.apps.ManagementappConfig",
-    "DemoApp.apps.DemoappConfig",
     "rest_framework",
 ]
 
