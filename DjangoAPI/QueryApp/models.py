@@ -23,6 +23,18 @@ class Item(neomodel.StructuredNode):
     trinket_interaction = neomodel.Relationship("Trinket", "INTERACTION")
     character_interaction = neomodel.Relationship("Character", "INTERACTION")
 
+    def get(self):
+        return {
+            "name": self.name,
+            "id": self.item_id,
+            "quote": self.quote,
+            "description": self.description,
+            "quality": self.quality,
+            "unlock": self.unlock,
+            "effects": self.effects,
+            "notes": self.effects,
+        }
+
 
 class Trinket(neomodel.StructuredNode):
     name = neomodel.StringProperty()
