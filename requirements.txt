@@ -4,3 +4,4 @@ django-cors-headers
 djangorestframework
 neo4j
 neomodel
+pylint
