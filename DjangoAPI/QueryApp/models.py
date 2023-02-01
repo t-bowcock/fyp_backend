@@ -32,7 +32,7 @@ class Item(neomodel.StructuredNode):
             "quality": self.quality,
             "unlock": self.unlock,
             "effects": self.effects,
-            "notes": self.effects,
+            "notes": self.notes,
         }
 
 
@@ -52,19 +52,63 @@ class Trinket(neomodel.StructuredNode):
     trinket_interaction = neomodel.Relationship("Trinket", "INTERACTION")
     character_interaction = neomodel.Relationship("Character", "INTERACTION")
 
+    def get(self):
+        return {
+            "name": self.name,
+            "id": self.trinket_id,
+            "pool": self.pool,
+            "quote": self.quote,
+            "description": self.description,
+            "tags": self.tags,
+            "unlock": self.unlock,
+            "effects": self.effects,
+            "notes": self.notes,
+        }
+
 
 class Character(neomodel.StructuredNode):
     name = neomodel.StringProperty()
     character_id = neomodel.IntegerProperty()
 
+    def get(self):
+        return {"name": self.name, "id": self.character_id}
+
 
 class SynergyRel(neomodel.StructuredRel):
     source = neomodel.IntegerProperty()
     destination = neomodel.IntegerProperty()
-    description = neomodel.ArrayProperty()
+    description = neomodel.StringProperty()
+
+    def get_all(self):
+        results, _ = neomodel.db.cypher_query("MATCH (n)-[r:Synergy]->(m) RETURN n, r, m")
+        rels = []
+        for row in results:
+            rel = self.inflate(row[1])
+            rels.append(
+                {
+                    "source": rel.start_node().name,
+                    "destination": rel.end_node().name,
+                    "description": rel.description,
+                }
+            )
+        return rels
 
 
 class InteractionRel(neomodel.StructuredRel):
     source = neomodel.IntegerProperty()
     destination = neomodel.IntegerProperty()
-    description = neomodel.ArrayProperty()
+    description = neomodel.StringProperty()
+
+    def get_all(self):
+        results, _ = neomodel.db.cypher_query("MATCH (n)-[r:Interaction]->(m) RETURN n, r, m")
+        rels = []
+        for row in results:
+            rel = self.inflate(row[1])
+            rels.append(
+                {
+                    "source": rel.start_node().name,
+                    "destination": rel.end_node().name,
+                    "description": rel.description,
+                }
+            )
+        return rels
