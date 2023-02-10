@@ -8,7 +8,7 @@ neomodel.config.DATABASE_URL = f"neo4j+s://{USER}:{PWD}@{URI}"
 
 class Item(neomodel.StructuredNode):
     name = neomodel.StringProperty()
-    item_id = neomodel.IntegerProperty()
+    id = neomodel.IntegerProperty()
     quote = neomodel.StringProperty()
     description = neomodel.StringProperty()
     quality = neomodel.IntegerProperty()
@@ -26,7 +26,7 @@ class Item(neomodel.StructuredNode):
     def get(self):
         return {
             "name": self.name,
-            "id": self.item_id,
+            "id": self.id,
             "quote": self.quote,
             "description": self.description,
             "quality": self.quality,
@@ -38,7 +38,7 @@ class Item(neomodel.StructuredNode):
 
 class Trinket(neomodel.StructuredNode):
     name = neomodel.StringProperty()
-    trinket_id = neomodel.IntegerProperty()
+    id = neomodel.IntegerProperty()
     pool = neomodel.StringProperty()
     quote = neomodel.StringProperty()
     description = neomodel.StringProperty()
@@ -55,7 +55,7 @@ class Trinket(neomodel.StructuredNode):
     def get(self):
         return {
             "name": self.name,
-            "id": self.trinket_id,
+            "id": self.id,
             "pool": self.pool,
             "quote": self.quote,
             "description": self.description,
@@ -68,10 +68,10 @@ class Trinket(neomodel.StructuredNode):
 
 class Character(neomodel.StructuredNode):
     name = neomodel.StringProperty()
-    character_id = neomodel.IntegerProperty()
+    id = neomodel.IntegerProperty()
 
     def get(self):
-        return {"name": self.name, "id": self.character_id}
+        return {"name": self.name, "id": self.id}
 
 
 class SynergyRel(neomodel.StructuredRel):
@@ -86,7 +86,9 @@ class SynergyRel(neomodel.StructuredRel):
             rel = self.inflate(row[1])
             rels.append(
                 {
+                    "source_id": rel.start_node().id,
                     "source": rel.start_node().name,
+                    "destination_id": rel.start_node().id,
                     "destination": rel.end_node().name,
                     "description": rel.description,
                 }
@@ -106,7 +108,9 @@ class InteractionRel(neomodel.StructuredRel):
             rel = self.inflate(row[1])
             rels.append(
                 {
+                    "source_id": rel.start_node().id,
                     "source": rel.start_node().name,
+                    "destination_id": rel.start_node().id,
                     "destination": rel.end_node().name,
                     "description": rel.description,
                 }
