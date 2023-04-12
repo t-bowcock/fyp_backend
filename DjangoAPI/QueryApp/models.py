@@ -35,6 +35,9 @@ class Item(neomodel.StructuredNode):
             "notes": self.notes,
         }
 
+    def get_basic(self):
+        return {"data": {"id": self.id}}
+
 
 class Trinket(neomodel.StructuredNode):
     name = neomodel.StringProperty()
@@ -65,6 +68,9 @@ class Trinket(neomodel.StructuredNode):
             "notes": self.notes,
         }
 
+    def get_basic(self):
+        return {"id": self.id}
+
 
 class Character(neomodel.StructuredNode):
     name = neomodel.StringProperty()
@@ -72,6 +78,9 @@ class Character(neomodel.StructuredNode):
 
     def get(self):
         return {"name": self.name, "id": self.id}
+
+    def get_basic(self):
+        return {"id": self.id}
 
 
 class SynergyRel(neomodel.StructuredRel):
@@ -88,9 +97,23 @@ class SynergyRel(neomodel.StructuredRel):
                 {
                     "source_id": rel.start_node().id,
                     "source": rel.start_node().name,
-                    "destination_id": rel.start_node().id,
+                    "destination_id": rel.end_node().id,
                     "destination": rel.end_node().name,
                     "description": rel.description,
+                }
+            )
+        return rels
+
+    def get_all_basic(self):
+        results, _ = neomodel.db.cypher_query("MATCH (n)-[r:Synergy]->(m) RETURN n, r, m")
+        rels = []
+        for row in results:
+            rel = self.inflate(row[1])
+            rels.append(
+                {
+                    "id": f"{rel.start_node().id}{rel.end_node().id}",
+                    "source": rel.start_node().id,
+                    "target": rel.end_node().id,
                 }
             )
         return rels
@@ -113,6 +136,20 @@ class InteractionRel(neomodel.StructuredRel):
                     "destination_id": rel.start_node().id,
                     "destination": rel.end_node().name,
                     "description": rel.description,
+                }
+            )
+        return rels
+
+    def get_all_basic(self):
+        results, _ = neomodel.db.cypher_query("MATCH (n)-[r:Synergy]->(m) RETURN n, r, m")
+        rels = []
+        for row in results:
+            rel = self.inflate(row[1])
+            rels.append(
+                {
+                    "id": f"{rel.start_node().id}{rel.end_node().id}",
+                    "source": rel.start_node().id,
+                    "target": rel.end_node().id,
                 }
             )
         return rels

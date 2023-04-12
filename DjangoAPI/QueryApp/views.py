@@ -12,7 +12,7 @@ def itemAPI(request):
     if request.method == "GET":
         items = []
         for item in Item.nodes.all():
-            items.append(item.get())
+            items.append(item.get_basic())
         content = {"items": items}
         return JsonResponse(content)
 
@@ -22,7 +22,7 @@ def trinketAPI(request):
     if request.method == "GET":
         trinkets = []
         for trinket in Trinket.nodes.all():
-            trinkets.append(trinket.get())
+            trinkets.append(trinket.get_basic())
         content = {"trinkets": trinkets}
         return JsonResponse(content)
 
@@ -32,7 +32,7 @@ def characterAPI(request):
     if request.method == "GET":
         characters = []
         for character in Character.nodes.all():
-            characters.append(character.get())
+            characters.append(character.get_basic())
         content = {"characters": characters}
         return JsonResponse(content)
 
@@ -41,7 +41,7 @@ def characterAPI(request):
 def synergyAPI(request):
     if request.method == "GET":
         synergy_rel = SynergyRel()
-        synergies = synergy_rel.get_all()
+        synergies = synergy_rel.get_all_basic()
         content = {"synergies": synergies}
         return JsonResponse(content)
 
@@ -50,6 +50,6 @@ def synergyAPI(request):
 def interactionAPI(request):
     if request.method == "GET":
         interaction_rel = InteractionRel()
-        interactions = interaction_rel.get_all()
+        interactions = interaction_rel.get_all_basic()
         content = {"interactions": interactions}
         return JsonResponse(content)
