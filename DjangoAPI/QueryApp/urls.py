@@ -7,4 +7,5 @@ urlpatterns = [
     path("characters", views.characterAPI, name="characters"),
     path("synergies", views.synergyAPI, name="synergies"),
     path("interactions", views.interactionAPI, name="interactions"),
+    path("all", views.allAPI, name="all"),
 ]

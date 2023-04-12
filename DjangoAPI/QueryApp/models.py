@@ -36,7 +36,7 @@ class Item(neomodel.StructuredNode):
         }
 
     def get_basic(self):
-        return {"data": {"id": self.id}}
+        return {"data": {"id": self.id, "name": self.name}}
 
 
 class Trinket(neomodel.StructuredNode):
@@ -69,7 +69,7 @@ class Trinket(neomodel.StructuredNode):
         }
 
     def get_basic(self):
-        return {"id": self.id}
+        return {"data": {"id": self.id, "name": self.name}}
 
 
 class Character(neomodel.StructuredNode):
@@ -80,7 +80,7 @@ class Character(neomodel.StructuredNode):
         return {"name": self.name, "id": self.id}
 
     def get_basic(self):
-        return {"id": self.id}
+        return {"data": {"id": self.id, "name": self.name}}
 
 
 class SynergyRel(neomodel.StructuredRel):
@@ -111,9 +111,12 @@ class SynergyRel(neomodel.StructuredRel):
             rel = self.inflate(row[1])
             rels.append(
                 {
-                    "id": f"{rel.start_node().id}{rel.end_node().id}",
-                    "source": rel.start_node().id,
-                    "target": rel.end_node().id,
+                    "data": {
+                        "id": f"{rel.start_node().id}{rel.end_node().id}",
+                        "source": rel.start_node().id,
+                        "target": rel.end_node().id,
+                        "name": "Synergy",
+                    }
                 }
             )
         return rels
@@ -131,11 +134,13 @@ class InteractionRel(neomodel.StructuredRel):
             rel = self.inflate(row[1])
             rels.append(
                 {
-                    "source_id": rel.start_node().id,
-                    "source": rel.start_node().name,
-                    "destination_id": rel.start_node().id,
-                    "destination": rel.end_node().name,
-                    "description": rel.description,
+                    "data": {
+                        "source_id": rel.start_node().id,
+                        "source": rel.start_node().name,
+                        "destination_id": rel.start_node().id,
+                        "destination": rel.end_node().name,
+                        "description": rel.description,
+                    }
                 }
             )
         return rels
@@ -147,9 +152,12 @@ class InteractionRel(neomodel.StructuredRel):
             rel = self.inflate(row[1])
             rels.append(
                 {
-                    "id": f"{rel.start_node().id}{rel.end_node().id}",
-                    "source": rel.start_node().id,
-                    "target": rel.end_node().id,
+                    "data": {
+                        "id": f"{rel.start_node().id}{rel.end_node().id}",
+                        "source": rel.start_node().id,
+                        "target": rel.end_node().id,
+                        "name": "interaction",
+                    }
                 }
             )
         return rels
