@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "django_neomodel",
     "QueryApp.apps.QueryappConfig",
-    "ManagementApp.apps.ManagementappConfig",
     "rest_framework",
 ]
 
