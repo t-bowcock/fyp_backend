@@ -1,4 +1,5 @@
 import neomodel
+import tqdm
 import json
 
 USER = "neo4j"
@@ -166,22 +167,24 @@ def get_all():
     results, _ = neomodel.db.cypher_query("MATCH (n) OPTIONAL MATCH (n)-[r]-(m) RETURN n,r,m", resolve_objects=True)
     nodes = []
     elements = {"nodes": [], "edges": []}
-    for result in results:
+    for result in tqdm.tqdm(results):
         if result[1] is None:
-            elements["nodes"].append({"data": {"id": result[0].id, "name": result[0].name}})
+            elements["nodes"].append({"data": {"id": str(result[0].id), "name": result[0].name}})
             nodes.append(result[0].id)
         else:
             elements["edges"].append(
                 {
                     "data": {
-                        "id": int(f"{result[1].start_node().id}{result[1].end_node().id}"),
-                        "source": result[1].start_node().id,
-                        "target": result[1].end_node().id,
+                        "id": f"{result[1].start_node().id}{result[1].end_node().id}",
+                        "source": str(result[1].start_node().id),
+                        "target": str(result[1].end_node().id),
                         "name": f"{result[1].start_node().name} (cc) {result[1].end_node().name}",
                     }
                 }
             )
             if result[0].id not in nodes:
                 elements["nodes"].append({"data": {"id": result[0].id, "name": result[0].name}})
-    with open("test.json", "w") as f:
+                nodes.append(result[0].id)
+    with open("result.json", "w") as f:
         json.dump(elements, f)
+    return elements

@@ -59,33 +59,6 @@ def interactionAPI(request):
 def allAPI(request):
     print("all request")
     if request.method == "GET":
-        # items = []
-        # for item in Item.nodes.all():
-        #     items.append(item.get_basic())
-        # print("items done")
-        # trinkets = []
-        # for trinket in Trinket.nodes.all():
-        #     trinkets.append(trinket.get_basic())
-        # print("trinkets done")
-        # characters = []
-        # for character in Character.nodes.all():
-        #     characters.append(character.get_basic())
-        # print("characters done")
-        # synergy_rel = SynergyRel()
-        # synergies = synergy_rel.get_all_basic()
-        # print("synergies done")
-        # interaction_rel = InteractionRel()
-        # interactions = interaction_rel.get_all_basic()
-        # print("interactions done")
-
-        # content = {
-        #     "items": items,
-        #     "trinkets": trinkets,
-        #     "characters": characters,
-        #     "synergies": synergies,
-        #     "interactions": interactions,
-        # }
-
-        # print("sending response")
-        # return JsonResponse(content)
-        get_all()
+        content = get_all()
+        print("sending response")
+        return JsonResponse(content)
