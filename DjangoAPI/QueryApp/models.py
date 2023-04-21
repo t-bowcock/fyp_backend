@@ -53,6 +53,7 @@ class InteractionRel(neomodel.StructuredRel):
     description = neomodel.StringProperty()
 
     def get_all(self):
+        # TODO could probably just return r and then just use that
         results, _ = neomodel.db.cypher_query("MATCH (n)-[r:Interaction]->(m) RETURN n, r, m")
         rels = []
         for row in results:
