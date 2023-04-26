@@ -40,8 +40,9 @@ def characterAPI(request):
 @csrf_exempt
 def synergyAPI(request):
     if request.method == "GET":
+        print("synergies reques")
         synergy_rel = SynergyRel()
-        synergies = synergy_rel.get_all_basic()
+        synergies = synergy_rel.get_all()
         content = {"synergies": synergies}
         return JsonResponse(content)
 
@@ -50,7 +51,7 @@ def synergyAPI(request):
 def interactionAPI(request):
     if request.method == "GET":
         interaction_rel = InteractionRel()
-        interactions = interaction_rel.get_all_basic()
+        interactions = interaction_rel.get_all()
         content = {"interactions": interactions}
         return JsonResponse(content)
 

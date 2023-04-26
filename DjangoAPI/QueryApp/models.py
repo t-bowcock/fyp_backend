@@ -14,34 +14,18 @@ class SynergyRel(neomodel.StructuredRel):
     description = neomodel.StringProperty()
 
     def get_all(self):
-        results, _ = neomodel.db.cypher_query("MATCH (n)-[r:Synergy]->(m) RETURN n, r, m")
+        results, _ = neomodel.db.cypher_query(
+            "MATCH (n)-[r:Synergy]->(m) RETURN n.id, n.name, r.description, m.id, m.name"
+        )
         rels = []
         for row in results:
-            rel = self.inflate(row[1])
             rels.append(
                 {
-                    "source_id": rel.start_node().id,
-                    "source": rel.start_node().name,
-                    "destination_id": rel.end_node().id,
-                    "destination": rel.end_node().name,
-                    "description": rel.description,
-                }
-            )
-        return rels
-
-    def get_all_basic(self):
-        results, _ = neomodel.db.cypher_query("MATCH (n)-[r:Synergy]->(m) RETURN n, r, m")
-        rels = []
-        for row in results:
-            rel = self.inflate(row[1])
-            rels.append(
-                {
-                    "data": {
-                        "id": f"{rel.start_node().id}{rel.end_node().id}",
-                        "source": rel.start_node().id,
-                        "target": rel.end_node().id,
-                        "name": "Synergy",
-                    }
+                    "source_id": row[0],
+                    "source": row[1],
+                    "destination_id": row[3],
+                    "destination": row[4],
+                    "description": row[2],
                 }
             )
         return rels
@@ -53,36 +37,18 @@ class InteractionRel(neomodel.StructuredRel):
     description = neomodel.StringProperty()
 
     def get_all(self):
-        results, _ = neomodel.db.cypher_query("MATCH (n)-[r:Interaction]->(m) RETURN n, r, m")
+        results, _ = neomodel.db.cypher_query(
+            "MATCH (n)-[r:Interaction]->(m) RETURN n.id, n.name, r.description, m.id, m.name"
+        )
         rels = []
         for row in results:
-            rel = self.inflate(row[1])
             rels.append(
                 {
-                    "data": {
-                        "source_id": rel.start_node().id,
-                        "source": rel.start_node().name,
-                        "destination_id": rel.start_node().id,
-                        "destination": rel.end_node().name,
-                        "description": rel.description,
-                    }
-                }
-            )
-        return rels
-
-    def get_all_basic(self):
-        results, _ = neomodel.db.cypher_query("MATCH (n)-[r:Synergy]->(m) RETURN n, r, m")
-        rels = []
-        for row in results:
-            rel = self.inflate(row[1])
-            rels.append(
-                {
-                    "data": {
-                        "id": f"{rel.start_node().id}{rel.end_node().id}",
-                        "source": rel.start_node().id,
-                        "target": rel.end_node().id,
-                        "name": "interaction",
-                    }
+                    "source_id": row[0],
+                    "source": row[1],
+                    "destination_id": row[3],
+                    "destination": row[4],
+                    "description": row[2],
                 }
             )
         return rels
@@ -164,27 +130,27 @@ class Character(neomodel.StructuredNode):
 
 
 def get_all():
-    results, _ = neomodel.db.cypher_query("MATCH (n) OPTIONAL MATCH (n)-[r]-(m) RETURN n,r,m", resolve_objects=True)
+    results, _ = neomodel.db.cypher_query(
+        "MATCH (n) OPTIONAL MATCH (n)-[r]-(m) RETURN n.id,n.name,m.id,m.name", resolve_objects=False
+    )
     nodes = []
     elements = {"nodes": [], "edges": []}
     for result in tqdm.tqdm(results):
-        if result[1] is None:
-            elements["nodes"].append({"data": {"id": str(result[0].id), "name": result[0].name}})
-            nodes.append(result[0].id)
+        if result[2] is None:
+            elements["nodes"].append({"data": {"id": str(result[0]), "name": result[1]}})
+            nodes.append(result[0])
         else:
             elements["edges"].append(
                 {
                     "data": {
-                        "id": f"{result[1].start_node().id}{result[1].end_node().id}",
-                        "source": str(result[1].start_node().id),
-                        "target": str(result[1].end_node().id),
-                        "name": f"{result[1].start_node().name} (cc) {result[1].end_node().name}",
+                        "id": f"{result[0]}{result[2]}",
+                        "source": str(result[0]),
+                        "target": str(result[2]),
+                        "name": f"{result[1]} (cc) {result[3]}",
                     }
                 }
             )
-            if result[0].id not in nodes:
-                elements["nodes"].append({"data": {"id": result[0].id, "name": result[0].name}})
-                nodes.append(result[0].id)
-    with open("result.json", "w") as f:
-        json.dump(elements, f)
+            if result[0] not in nodes:
+                elements["nodes"].append({"data": {"id": result[0], "name": result[1]}})
+                nodes.append(result[0])
     return elements
