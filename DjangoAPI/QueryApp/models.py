@@ -1,6 +1,5 @@
 import neomodel
 import tqdm
-import json
 
 USER = "neo4j"
 PWD = "Wxb1o7yVIFYk3R-FI1_8j6jZW1X41ERP8XVV7UvoP-E"
@@ -13,7 +12,8 @@ class SynergyRel(neomodel.StructuredRel):
     destination = neomodel.IntegerProperty()
     description = neomodel.StringProperty()
 
-    def get_all(self):
+    @staticmethod
+    def get_all():
         results, _ = neomodel.db.cypher_query(
             "MATCH (n)-[r:Synergy]->(m) RETURN n.id, n.name, r.description, m.id, m.name"
         )
@@ -30,13 +30,21 @@ class SynergyRel(neomodel.StructuredRel):
             )
         return rels
 
+    @staticmethod
+    def get(source, target):
+        results, _ = neomodel.db.cypher_query(
+            f"MATCH (n{{name:'{source}'}})-[r:Synergy]-(m{{name:'{target}'}}) RETURN r.description"
+        )
+        return {"description": results[0][0]}
+
 
 class InteractionRel(neomodel.StructuredRel):
     source = neomodel.IntegerProperty()
     destination = neomodel.IntegerProperty()
     description = neomodel.StringProperty()
 
-    def get_all(self):
+    @staticmethod
+    def get_all():
         results, _ = neomodel.db.cypher_query(
             "MATCH (n)-[r:Interaction]->(m) RETURN n.id, n.name, r.description, m.id, m.name"
         )
@@ -52,6 +60,13 @@ class InteractionRel(neomodel.StructuredRel):
                 }
             )
         return rels
+
+    @staticmethod
+    def get(source, target):
+        results, _ = neomodel.db.cypher_query(
+            f"MATCH (n{{name:'{source}'}})-[r:Interaction]-(m{{name:'{target}'}}) RETURN r.description"
+        )
+        return {"description": results[0][0]}
 
 
 class Item(neomodel.StructuredNode):
@@ -70,7 +85,7 @@ class Item(neomodel.StructuredNode):
     trinket_interaction = neomodel.Relationship("Trinket", "Interaction", model=InteractionRel)
     character_interaction = neomodel.Relationship("Character", "Interaction", model=InteractionRel)
 
-    def get(self):
+    def format(self):
         return {
             "name": self.name,
             "id": self.id,
@@ -101,7 +116,7 @@ class Trinket(neomodel.StructuredNode):
     trinket_interaction = neomodel.Relationship("Trinket", "Interaction", model=InteractionRel)
     character_interaction = neomodel.Relationship("Character", "Interaction", model=InteractionRel)
 
-    def get(self):
+    def format(self):
         return {
             "name": self.name,
             "id": self.id,
@@ -122,7 +137,7 @@ class Character(neomodel.StructuredNode):
     name = neomodel.StringProperty()
     id = neomodel.IntegerProperty()
 
-    def get(self):
+    def format(self):
         return {"name": self.name, "id": self.id}
 
     def get_basic(self):
