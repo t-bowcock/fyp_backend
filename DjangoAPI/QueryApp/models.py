@@ -1,5 +1,5 @@
 import neomodel
-import tqdm
+import json
 
 USER = "neo4j"
 PWD = "Wxb1o7yVIFYk3R-FI1_8j6jZW1X41ERP8XVV7UvoP-E"
@@ -150,7 +150,7 @@ def get_all():
     )
     nodes = []
     elements = {"nodes": [], "edges": []}
-    for result in tqdm.tqdm(results):
+    for result in results:
         if result[2] is None:
             elements["nodes"].append({"data": {"id": str(result[0]), "name": result[1]}})
             nodes.append(result[0])
@@ -166,6 +166,6 @@ def get_all():
                 }
             )
             if result[0] not in nodes:
-                elements["nodes"].append({"data": {"id": result[0], "name": result[1]}})
+                elements["nodes"].append({"data": {"id": str(result[0]), "name": result[1]}})
                 nodes.append(result[0])
     return elements

@@ -8,29 +8,31 @@ from .models import Item, Trinket, Character, SynergyRel, InteractionRel, get_al
 
 
 @csrf_exempt
-def itemAPI(request, item_name: str = None):
+def itemAPI(request, item_id: int = None):
     if request.method == "GET":
 
-        if item_name is None:
+        if item_id is None:
             items = []
             for item in Item.nodes.all():
                 items.append(item.format())
             return JsonResponse({"items": items})
 
-        return JsonResponse(Item.nodes.get(name=item_name).format())
+        print(item_id)
+        print(Item.nodes.get(id=item_id))
+        return JsonResponse(Item.nodes.get(id=item_id).format())
 
 
 @csrf_exempt
-def trinketAPI(request, trinket_name: str = None):
+def trinketAPI(request, trinket_id: int = None):
     if request.method == "GET":
 
-        if trinket_name is None:
+        if trinket_id is None:
             trinkets = []
             for trinket in Trinket.nodes.all():
                 trinkets.append(trinket.format())
             return JsonResponse({"trinkets": trinkets})
 
-        return JsonResponse(Trinket.nodes.get(name=trinket_name).format())
+        return JsonResponse(Trinket.nodes.get(id=trinket_id).format())
 
 
 @csrf_exempt
