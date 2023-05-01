@@ -17,8 +17,6 @@ def itemAPI(request, item_id: int = None):
                 items.append(item.format())
             return JsonResponse({"items": items})
 
-        print(item_id)
-        print(Item.nodes.get(id=item_id))
         return JsonResponse(Item.nodes.get(id=item_id).format())
 
 

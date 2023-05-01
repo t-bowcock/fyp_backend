@@ -1,5 +1,4 @@
 import neomodel
-import json
 
 USER = "neo4j"
 PWD = "Wxb1o7yVIFYk3R-FI1_8j6jZW1X41ERP8XVV7UvoP-E"
@@ -95,6 +94,7 @@ class Item(neomodel.StructuredNode):
             "unlock": self.unlock,
             "effects": self.effects,
             "notes": self.notes,
+            "nodeType": "Item",
         }
 
     def get_basic(self):
@@ -146,26 +146,29 @@ class Character(neomodel.StructuredNode):
 
 def get_all():
     results, _ = neomodel.db.cypher_query(
-        "MATCH (n) OPTIONAL MATCH (n)-[r]-(m) RETURN n.id,n.name,m.id,m.name", resolve_objects=False
+        "MATCH (n) OPTIONAL MATCH (n)-[r]-(m) RETURN n.id,n.name,labels(n),m.id,m.name,labels(m)", resolve_objects=False
     )
     nodes = []
     elements = {"nodes": [], "edges": []}
     for result in results:
-        if result[2] is None:
-            elements["nodes"].append({"data": {"id": str(result[0]), "name": result[1]}})
-            nodes.append(result[0])
+        if result[3] is None:
+            elements["nodes"].append({"data": {"id": str(result[0]), "name": result[1], "nodeType": result[2][0]}})
+            nodes.append((result[0], result[2][0]))
         else:
             elements["edges"].append(
                 {
                     "data": {
-                        "id": f"{result[0]}{result[2]}",
+                        "id": f"{result[0]}{result[3]}",
                         "source": str(result[0]),
-                        "target": str(result[2]),
-                        "name": f"{result[1]} (cc) {result[3]}",
+                        "target": str(result[3]),
+                        "name": f"{result[1]} (cc) {result[4]}",
                     }
                 }
             )
-            if result[0] not in nodes:
-                elements["nodes"].append({"data": {"id": str(result[0]), "name": result[1]}})
-                nodes.append(result[0])
+            if (result[0], result[2][0]) not in nodes:
+                elements["nodes"].append({"data": {"id": str(result[0]), "name": result[1], "nodeType": result[2][0]}})
+                nodes.append((result[0], result[2][0]))
+            if (result[3], result[5][0]) not in nodes:
+                elements["nodes"].append({"data": {"id": str(result[3]), "name": result[4], "nodeType": result[5][0]}})
+                nodes.append((result[3], result[5][0]))
     return elements
