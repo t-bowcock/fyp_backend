@@ -1,55 +1,72 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.http.response import JsonResponse
 
-from .models import Item, Trinket, Character, SynergyRel, InteractionRel
+from .models import Item, Trinket, Character, SynergyRel, InteractionRel, get_all
 
 # Pylint cannot find nodes.all() member for some reason
 # pylint: disable=no-member
 
 
 @csrf_exempt
-def itemAPI(request):
+def itemAPI(request, item_id: int = None):
     if request.method == "GET":
-        items = []
-        for item in Item.nodes.all():
-            items.append(item.get())
-        content = {"items": items}
-        return JsonResponse(content)
+
+        if item_id is None:
+            items = []
+            for item in Item.nodes.all():
+                items.append(item.format())
+            return JsonResponse({"items": items})
+
+        return JsonResponse(Item.nodes.get(id=item_id).format())
 
 
 @csrf_exempt
-def trinketAPI(request):
+def trinketAPI(request, trinket_id: int = None):
     if request.method == "GET":
-        trinkets = []
-        for trinket in Trinket.nodes.all():
-            trinkets.append(trinket.get())
-        content = {"trinkets": trinkets}
-        return JsonResponse(content)
+
+        if trinket_id is None:
+            trinkets = []
+            for trinket in Trinket.nodes.all():
+                trinkets.append(trinket.format())
+            return JsonResponse({"trinkets": trinkets})
+
+        return JsonResponse(Trinket.nodes.get(id=trinket_id).format())
 
 
 @csrf_exempt
-def characterAPI(request):
+def characterAPI(request, character_name: str = None):
     if request.method == "GET":
-        characters = []
-        for character in Character.nodes.all():
-            characters.append(character.get())
-        content = {"characters": characters}
-        return JsonResponse(content)
+
+        if character_name is None:
+            characters = []
+            for character in Character.nodes.all():
+                characters.append(character.get_basic())
+            return JsonResponse({"characters": characters})
+
+        return JsonResponse(Character.nodes.get(name=character_name).format())
 
 
 @csrf_exempt
-def synergyAPI(request):
+def synergyAPI(request, source: str = None, target: str = None):
     if request.method == "GET":
-        synergy_rel = SynergyRel()
-        synergies = synergy_rel.get_all()
-        content = {"synergies": synergies}
-        return JsonResponse(content)
+
+        if source is None or target is None:
+            return JsonResponse({"synergies": SynergyRel.get_all()})
+
+        return JsonResponse(SynergyRel.get(source, target))
 
 
 @csrf_exempt
-def interactionAPI(request):
+def interactionAPI(request, source: str = None, target: str = None):
     if request.method == "GET":
-        interaction_rel = InteractionRel()
-        interactions = interaction_rel.get_all()
-        content = {"interactions": interactions}
-        return JsonResponse(content)
+
+        if source is None or target is None:
+            return JsonResponse({"interactions": InteractionRel.get_all()})
+
+        return JsonResponse(InteractionRel.get(source, target))
+
+
+@csrf_exempt
+def allAPI(request):
+    if request.method == "GET":
+        return JsonResponse(get_all())
