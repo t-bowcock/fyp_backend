@@ -34,16 +34,16 @@ def trinketAPI(request, trinket_id: int = None):
 
 
 @csrf_exempt
-def characterAPI(request, character_name: str = None):
+def characterAPI(request, character_id: int = None):
     if request.method == "GET":
 
-        if character_name is None:
+        if character_id is None:
             characters = []
             for character in Character.nodes.all():
                 characters.append(character.get_basic())
             return JsonResponse({"characters": characters})
 
-        return JsonResponse(Character.nodes.get(name=character_name).format())
+        return JsonResponse(Character.nodes.get(id=character_id).format())
 
 
 @csrf_exempt
