@@ -175,5 +175,5 @@ def get_all():
 
 
 def get_all_names():
-    results, _ = neomodel.db.cypher_query("MATCH (n) RETURN n.name", resolve_objects=False)
-    return {"names": [result[0] for result in results]}
+    results, _ = neomodel.db.cypher_query("MATCH (n) RETURN n.name, n.id", resolve_objects=False)
+    return {"names": [{"name": result[0], "id": result[1]} for result in results]}

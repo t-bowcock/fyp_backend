@@ -75,3 +75,34 @@ def allAPI(request):
 def allNamesAPI(request):
     if request.method == "GET":
         return JsonResponse(get_all_names())
+
+
+def searchAPI(
+    request, node1_id: int = None, type1: str = None, rel: str = None, node2_id: int = None, type2: str = None
+):
+    if request.method == "GET":
+        if not node1_id:
+            # just query rel
+            # need to write a way to rels with nodes, the get_all methods just get the edges
+            # probably just use the same CYPER query and format the data differently
+            pass
+        elif not rel and not node2_id:
+            # 1 node
+            if type1 == "Item":
+                return JsonResponse(Item.nodes.get(id=node1_id).format())
+            if type1 == "Trinket":
+                return JsonResponse(Trinket.nodes.get(id=node1_id).format())
+            if type1 == "Character":
+                return JsonResponse(Character.nodes.get(id=node1_id).format())
+        elif rel and not node2_id:
+            # 1 node and rel
+            pass
+        elif not rel and node2_id:
+            # 2 nodes and no rel
+            pass
+        elif rel and node2_id:
+            # 2 does and rel
+            pass
+        else:
+            # error?
+            print("shit")

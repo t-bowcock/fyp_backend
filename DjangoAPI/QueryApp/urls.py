@@ -13,4 +13,10 @@ urlpatterns = [
     path("interactions", views.interactionAPI, name="interactions"),
     path("all", views.allAPI, name="all"),
     path("all/names", views.allNamesAPI, name="names"),
+    path("all/<str:type1>_<int:node1_id>", views.searchAPI, name="search"),
+    path("all/<str:rel>", views.searchAPI, name="search"),
+    path("all/<str:type2>_<int:node2_id>", views.searchAPI, name="search"),
+    path("all/<str:type1>_<int:node1_id>/<str:rel>", views.searchAPI, name="search"),
+    path("all/<str:type1>_<int:node1_id>/<str:type2>_<int:node2_id>", views.searchAPI, name="search"),
+    path("all/<str:type1>_<int:node1_id>/<str:rel>/<str:type2>_<int:node2_id>", views.searchAPI, name="search"),
 ]
