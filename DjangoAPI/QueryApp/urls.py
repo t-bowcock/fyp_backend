@@ -12,4 +12,5 @@ urlpatterns = [
     path("synergies/<str:source>_<str:target>", views.synergyAPI, name="synergy"),
     path("interactions", views.interactionAPI, name="interactions"),
     path("all", views.allAPI, name="all"),
+    path("all/names", views.allNamesAPI, name="names"),
 ]

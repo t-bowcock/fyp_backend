@@ -1,7 +1,7 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.http.response import JsonResponse
 
-from .models import Item, Trinket, Character, SynergyRel, InteractionRel, get_all
+from .models import Item, Trinket, Character, SynergyRel, InteractionRel, get_all, get_all_names
 
 # Pylint cannot find nodes.all() member for some reason
 # pylint: disable=no-member
@@ -70,3 +70,8 @@ def interactionAPI(request, source: str = None, target: str = None):
 def allAPI(request):
     if request.method == "GET":
         return JsonResponse(get_all())
+
+
+def allNamesAPI(request):
+    if request.method == "GET":
+        return JsonResponse(get_all_names())

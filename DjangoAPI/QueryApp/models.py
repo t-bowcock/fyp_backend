@@ -172,3 +172,8 @@ def get_all():
                 elements["nodes"].append({"data": {"id": str(result[3]), "name": result[4], "nodeType": result[5][0]}})
                 nodes.append((result[3], result[5][0]))
     return elements
+
+
+def get_all_names():
+    results, _ = neomodel.db.cypher_query("MATCH (n) RETURN n.name", resolve_objects=False)
+    return {"names": [result[0] for result in results]}
