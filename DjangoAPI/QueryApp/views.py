@@ -1,16 +1,15 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.http.response import JsonResponse
 
-from .models import Item, Trinket, Character, SynergyRel, InteractionRel, get_all, get_all_names
+from .models import Item, Trinket, Character, SynergyRel, InteractionRel, get_all, get_all_names, custom_query
 
 # Pylint cannot find nodes.all() member for some reason
 # pylint: disable=no-member
 
 
 @csrf_exempt
-def itemAPI(request, item_id: int = None):
+def itemAPI(request, item_id: str = None):
     if request.method == "GET":
-
         if item_id is None:
             items = []
             for item in Item.nodes.all():
@@ -21,9 +20,8 @@ def itemAPI(request, item_id: int = None):
 
 
 @csrf_exempt
-def trinketAPI(request, trinket_id: int = None):
+def trinketAPI(request, trinket_id: str = None):
     if request.method == "GET":
-
         if trinket_id is None:
             trinkets = []
             for trinket in Trinket.nodes.all():
@@ -34,9 +32,8 @@ def trinketAPI(request, trinket_id: int = None):
 
 
 @csrf_exempt
-def characterAPI(request, character_id: int = None):
+def characterAPI(request, character_id: str = None):
     if request.method == "GET":
-
         if character_id is None:
             characters = []
             for character in Character.nodes.all():
@@ -49,7 +46,6 @@ def characterAPI(request, character_id: int = None):
 @csrf_exempt
 def synergyAPI(request, source: str = None, target: str = None):
     if request.method == "GET":
-
         if source is None or target is None:
             return JsonResponse({"synergies": SynergyRel.get_all()})
 
@@ -59,7 +55,6 @@ def synergyAPI(request, source: str = None, target: str = None):
 @csrf_exempt
 def interactionAPI(request, source: str = None, target: str = None):
     if request.method == "GET":
-
         if source is None or target is None:
             return JsonResponse({"interactions": InteractionRel.get_all()})
 
@@ -78,14 +73,11 @@ def allNamesAPI(request):
 
 
 def searchAPI(
-    request, node1_id: int = None, type1: str = None, rel: str = None, node2_id: int = None, type2: str = None
+    request, node1_id: str = None, type1: str = None, rel: str = None, node2_id: str = None, type2: str = None
 ):
     if request.method == "GET":
         if not node1_id:
-            # just query rel
-            # need to write a way to rels with nodes, the get_all methods just get the edges
-            # probably just use the same CYPER query and format the data differently
-            pass
+            query = f"MATCH (n)-[r:{rel}]-(m) RETURN n.id, n.name, labels(n), m.id, m.name, labels(m)"
         elif not rel and not node2_id:
             # 1 node
             if type1 == "Item":
@@ -96,13 +88,16 @@ def searchAPI(
                 return JsonResponse(Character.nodes.get(id=node1_id).format())
         elif rel and not node2_id:
             # 1 node and rel
-            pass
+            query = (
+                f"MATCH (n{{'id':{node1_id}}})-[r:{rel}]-(m) RETURN n.id, n.name, labels(n), m.id, m.name, labels(m)"
+            )
         elif not rel and node2_id:
             # 2 nodes and no rel
-            pass
+            query = f"MATCH (n{{'id':{node1_id}}})-[r]-(m{{'id':{node2_id}}}) RETURN n.id, n.name, labels(n), m.id, m.name, labels(m)"
         elif rel and node2_id:
             # 2 does and rel
-            pass
+            query = f"MATCH (n{{'id':{node1_id}}})-[r:{rel}]-(m{{'id':{node2_id}}}) RETURN n.id, n.name, labels(n), m.id, m.name, labels(m)"
         else:
             # error?
             print("shit")
+        return JsonResponse(custom_query(query))

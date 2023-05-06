@@ -7,8 +7,8 @@ neomodel.config.DATABASE_URL = f"neo4j+s://{USER}:{PWD}@{URI}"
 
 
 class SynergyRel(neomodel.StructuredRel):
-    source = neomodel.IntegerProperty()
-    destination = neomodel.IntegerProperty()
+    source = neomodel.StringProperty()
+    destination = neomodel.StringProperty()
     description = neomodel.StringProperty()
 
     @staticmethod
@@ -38,8 +38,8 @@ class SynergyRel(neomodel.StructuredRel):
 
 
 class InteractionRel(neomodel.StructuredRel):
-    source = neomodel.IntegerProperty()
-    destination = neomodel.IntegerProperty()
+    source = neomodel.StringProperty()
+    destination = neomodel.StringProperty()
     description = neomodel.StringProperty()
 
     @staticmethod
@@ -70,7 +70,7 @@ class InteractionRel(neomodel.StructuredRel):
 
 class Item(neomodel.StructuredNode):
     name = neomodel.StringProperty()
-    id = neomodel.IntegerProperty()
+    id = neomodel.StringProperty()
     quote = neomodel.StringProperty()
     description = neomodel.StringProperty()
     quality = neomodel.IntegerProperty()
@@ -103,7 +103,7 @@ class Item(neomodel.StructuredNode):
 
 class Trinket(neomodel.StructuredNode):
     name = neomodel.StringProperty()
-    id = neomodel.IntegerProperty()
+    id = neomodel.StringProperty()
     pool = neomodel.StringProperty()
     quote = neomodel.StringProperty()
     description = neomodel.StringProperty()
@@ -135,7 +135,7 @@ class Trinket(neomodel.StructuredNode):
 
 class Character(neomodel.StructuredNode):
     name = neomodel.StringProperty()
-    id = neomodel.IntegerProperty()
+    id = neomodel.StringProperty()
 
     def format(self):
         return {"name": self.name, "id": self.id}
@@ -145,9 +145,16 @@ class Character(neomodel.StructuredNode):
 
 
 def get_all():
-    results, _ = neomodel.db.cypher_query(
-        "MATCH (n) OPTIONAL MATCH (n)-[r]-(m) RETURN n.id,n.name,labels(n),m.id,m.name,labels(m)", resolve_objects=False
-    )
+    return custom_query("MATCH (n) OPTIONAL MATCH (n)-[r]-(m) RETURN n.id,n.name,labels(n),m.id,m.name,labels(m)")
+
+
+def get_all_names():
+    results, _ = neomodel.db.cypher_query("MATCH (n) RETURN n.name, n.id", resolve_objects=False)
+    return {"names": [{"name": result[0], "id": result[1]} for result in results]}
+
+
+def custom_query(query: str):
+    results, _ = neomodel.db.cypher_query(query, resolve_objects=False)
     nodes = []
     elements = {"nodes": [], "edges": []}
     for result in results:
@@ -172,8 +179,3 @@ def get_all():
                 elements["nodes"].append({"data": {"id": str(result[3]), "name": result[4], "nodeType": result[5][0]}})
                 nodes.append((result[3], result[5][0]))
     return elements
-
-
-def get_all_names():
-    results, _ = neomodel.db.cypher_query("MATCH (n) RETURN n.name, n.id", resolve_objects=False)
-    return {"names": [{"name": result[0], "id": result[1]} for result in results]}
