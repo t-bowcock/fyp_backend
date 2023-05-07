@@ -72,31 +72,25 @@ def allNamesAPI(request):
         return JsonResponse(get_all_names())
 
 
-def searchAPI(
-    request, node1_id: str = None, type1: str = None, rel: str = None, node2_id: str = None, type2: str = None
-):
+def searchAPI(request, node1_id: str = None, rel: str = None, node2_id: str = None):
     if request.method == "GET":
+        query = ""
         if not node1_id:
             query = f"MATCH (n)-[r:{rel}]-(m) RETURN n.id, n.name, labels(n), m.id, m.name, labels(m)"
         elif not rel and not node2_id:
             # 1 node
-            if type1 == "Item":
-                return JsonResponse(Item.nodes.get(id=node1_id).format())
-            if type1 == "Trinket":
-                return JsonResponse(Trinket.nodes.get(id=node1_id).format())
-            if type1 == "Character":
-                return JsonResponse(Character.nodes.get(id=node1_id).format())
+            query = f"MATCH (n{{id:'{node1_id}'}})-[r]-(m) RETURN n.id, n.name, labels(n), m.id, m.name, labels(m)"
         elif rel and not node2_id:
             # 1 node and rel
             query = (
-                f"MATCH (n{{'id':{node1_id}}})-[r:{rel}]-(m) RETURN n.id, n.name, labels(n), m.id, m.name, labels(m)"
+                f"MATCH (n{{id:'{node1_id}'}})-[r:{rel}]-(m) RETURN n.id, n.name, labels(n), m.id, m.name, labels(m)"
             )
         elif not rel and node2_id:
             # 2 nodes and no rel
-            query = f"MATCH (n{{'id':{node1_id}}})-[r]-(m{{'id':{node2_id}}}) RETURN n.id, n.name, labels(n), m.id, m.name, labels(m)"
+            query = f"MATCH (n{{id:'{node1_id}'}})-[r]-(m{{id:'{node2_id}'}}) RETURN n.id, n.name, labels(n), m.id, m.name, labels(m)"
         elif rel and node2_id:
             # 2 does and rel
-            query = f"MATCH (n{{'id':{node1_id}}})-[r:{rel}]-(m{{'id':{node2_id}}}) RETURN n.id, n.name, labels(n), m.id, m.name, labels(m)"
+            query = f"MATCH (n{{id:'{node1_id}'}})-[r:{rel}]-(m{{id:'{node2_id}'}}) RETURN n.id, n.name, labels(n), m.id, m.name, labels(m)"
         else:
             # error?
             print("shit")

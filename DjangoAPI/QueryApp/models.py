@@ -97,9 +97,6 @@ class Item(neomodel.StructuredNode):
             "nodeType": "Item",
         }
 
-    def get_basic(self):
-        return {"data": {"id": self.id, "name": self.name}}
-
 
 class Trinket(neomodel.StructuredNode):
     name = neomodel.StringProperty()
@@ -129,9 +126,6 @@ class Trinket(neomodel.StructuredNode):
             "notes": self.notes,
         }
 
-    def get_basic(self):
-        return {"data": {"id": self.id, "name": self.name}}
-
 
 class Character(neomodel.StructuredNode):
     name = neomodel.StringProperty()
@@ -139,9 +133,6 @@ class Character(neomodel.StructuredNode):
 
     def format(self):
         return {"name": self.name, "id": self.id}
-
-    def get_basic(self):
-        return {"data": {"id": self.id, "name": self.name}}
 
 
 def get_all():
