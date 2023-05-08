@@ -29,13 +29,6 @@ class SynergyRel(neomodel.StructuredRel):
             )
         return rels
 
-    @staticmethod
-    def get(source, target):
-        results, _ = neomodel.db.cypher_query(
-            f"MATCH (n{{name:'{source}'}})-[r:Synergy]-(m{{name:'{target}'}}) RETURN r.description"
-        )
-        return {"description": results[0][0]}
-
 
 class InteractionRel(neomodel.StructuredRel):
     source = neomodel.StringProperty()
@@ -59,13 +52,6 @@ class InteractionRel(neomodel.StructuredRel):
                 }
             )
         return rels
-
-    @staticmethod
-    def get(source, target):
-        results, _ = neomodel.db.cypher_query(
-            f"MATCH (n{{name:'{source}'}})-[r:Interaction]-(m{{name:'{target}'}}) RETURN r.description"
-        )
-        return {"description": results[0][0]}
 
 
 class Item(neomodel.StructuredNode):
@@ -136,7 +122,7 @@ class Character(neomodel.StructuredNode):
 
 
 def get_all():
-    return custom_query("MATCH (n) OPTIONAL MATCH (n)-[r]-(m) RETURN n.id,n.name,labels(n),m.id,m.name,labels(m)")
+    return custom_query("MATCH (n)-[r]-(m) RETURN n.id,n.name,labels(n),m.id,m.name,labels(m)")
 
 
 def get_all_names():
@@ -170,3 +156,10 @@ def custom_query(query: str):
                 elements["nodes"].append({"data": {"id": str(result[3]), "name": result[4], "nodeType": result[5][0]}})
                 nodes.append((result[3], result[5][0]))
     return elements
+
+
+def get_rel(source, target):
+    results, _ = neomodel.db.cypher_query(
+        f"MATCH (n{{id:'{source}'}})-[r]-(m{{id:'{target}'}}) RETURN n.name, r.description, m.name"
+    )
+    return {"source": results[0][0], "description": results[0][1], "target": results[0][2]}
