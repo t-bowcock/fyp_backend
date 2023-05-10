@@ -83,7 +83,9 @@ def allNamesAPI(request):
 def searchAPI(request, node1_id: str = None, rel: str = None, node2_id: str = None):
     if request.method == "GET":
         query = ""
+        print(rel)
         if not node1_id and rel:
+            print("???")
             query = f"MATCH (n)-[r:{rel}]-(m) RETURN n.id, n.name, labels(n), m.id, m.name, labels(m)"
         elif not rel and not node2_id:
             # 1 node
@@ -99,7 +101,4 @@ def searchAPI(request, node1_id: str = None, rel: str = None, node2_id: str = No
         elif rel and node2_id:
             # 2 does and rel
             query = f"MATCH (n{{id:'{node1_id}'}})-[r:{rel}]-(m{{id:'{node2_id}'}}) RETURN n.id, n.name, labels(n), m.id, m.name, labels(m)"
-        else:
-            # error?
-            print("shit")
         return JsonResponse(custom_query(query))

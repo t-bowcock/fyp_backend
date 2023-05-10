@@ -14,8 +14,8 @@ urlpatterns = [
     path("all", views.allAPI, name="all"),
     path("all/names", views.allNamesAPI, name="names"),
     path("all/<str:node1_id>", views.searchAPI, name="search"),
-    path("all/rel_<str:rel>", views.searchAPI, name="search"),
-    path("all/<str:node1_id>/rel_<str:rel>", views.searchAPI, name="search"),
+    path("all/rel/<str:rel>", views.searchAPI, name="search"),
+    path("all/<str:node1_id>/rel/<str:rel>", views.searchAPI, name="search"),
     path("all/<str:node1_id>/<str:node2_id>", views.searchAPI, name="search"),
-    path("all/<str:node1_id>/rel_<str:rel>/<str:node2_id>", views.searchAPI, name="search"),
+    path("all/<str:node1_id>/<str:rel>/<str:node2_id>", views.searchAPI, name="search"),
 ]
