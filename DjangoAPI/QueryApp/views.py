@@ -37,7 +37,7 @@ def characterAPI(request, character_id: str = None):
         if character_id is None:
             characters = []
             for character in Character.nodes.all():
-                characters.append(character.get_basic())
+                characters.append(character.format())
             return JsonResponse({"characters": characters})
 
         return JsonResponse(Character.nodes.get(id=character_id).format())
