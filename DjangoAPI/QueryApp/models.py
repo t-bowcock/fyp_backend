@@ -69,17 +69,43 @@ class Item(neomodel.StructuredNode):
     item_interaction = neomodel.Relationship("Item", "Interaction", model=InteractionRel)
     trinket_interaction = neomodel.Relationship("Trinket", "Interaction", model=InteractionRel)
     character_interaction = neomodel.Relationship("Character", "Interaction", model=InteractionRel)
-
-    def format(self):
+    
+    @staticmethod
+    def get_all():
+        results, _ = neomodel.db.cypher_query(
+            "MATCH (n:Item) RETURN n"
+        )
+        items = []
+        for row in results:
+            items.append(
+                {
+                    "name": row[0]["name"],
+                    "id": row[0]["id"],
+                    "quote": row[0]["quote"],
+                    "description": row[0]["description"],
+                    "quality": row[0]["quality"],
+                    "unlock": row[0]["unlock"],
+                    "effects": row[0]["effects"],
+                    "notes": row[0]["notes"],
+                    "nodeType": "Item",
+                }
+            )
+        return items
+    
+    @staticmethod
+    def get(item_id: str):
+        results, _ = neomodel.db.cypher_query(
+            f"MATCH (n{{id:'{item_id}'}}) RETURN n"
+        )
         return {
-            "name": self.name,
-            "id": self.id,
-            "quote": self.quote,
-            "description": self.description,
-            "quality": self.quality,
-            "unlock": self.unlock,
-            "effects": self.effects,
-            "notes": self.notes,
+            "name": results[0][0]["name"],
+            "id": results[0][0]["id"],
+            "quote": results[0][0]["quote"],
+            "description": results[0][0]["description"],
+            "quality": results[0][0]["quality"],
+            "unlock": results[0][0]["unlock"],
+            "effects": results[0][0]["effects"],
+            "notes": results[0][0]["notes"],
             "nodeType": "Item",
         }
 
@@ -99,17 +125,45 @@ class Trinket(neomodel.StructuredNode):
     trinket_interaction = neomodel.Relationship("Trinket", "Interaction", model=InteractionRel)
     character_interaction = neomodel.Relationship("Character", "Interaction", model=InteractionRel)
 
-    def format(self):
+    @staticmethod
+    def get_all():
+        results, _ = neomodel.db.cypher_query(
+            "MATCH (n:Trinket) RETURN n"
+        )
+        trinkets = []
+        for row in results:
+            trinkets.append(
+                {
+                    "name": row[0]["name"],
+                    "id": row[0]["id"],
+                    "pool": row[0]["pool"],
+                    "quote": row[0]["quote"],
+                    "description": row[0]["description"],
+                    "tags": row[0]["tags"],
+                    "unlock": row[0]["unlock"],
+                    "effects": row[0]["effects"],
+                    "notes": row[0]["notes"],
+                    "nodeType": "Trinket",
+                }
+            )
+        return trinkets
+    
+    @staticmethod
+    def get(trinket_id: str):
+        results, _ = neomodel.db.cypher_query(
+            f"MATCH (n{{id:'{trinket_id}'}}) RETURN n"
+        )
         return {
-            "name": self.name,
-            "id": self.id,
-            "pool": self.pool,
-            "quote": self.quote,
-            "description": self.description,
-            "tags": self.tags,
-            "unlock": self.unlock,
-            "effects": self.effects,
-            "notes": self.notes,
+            "name": results[0][0]["name"],
+            "id": results[0][0]["id"],
+            "pool": results[0][0]["pool"],
+            "quote": results[0][0]["quote"],
+            "description": results[0][0]["description"],
+            "tags": results[0][0]["tags"],
+            "unlock": results[0][0]["unlock"],
+            "effects": results[0][0]["effects"],
+            "notes": results[0][0]["notes"],
+            "nodeType": "Trinket",
         }
 
 
@@ -117,8 +171,30 @@ class Character(neomodel.StructuredNode):
     name = neomodel.StringProperty()
     id = neomodel.StringProperty()
 
-    def format(self):
-        return {"name": self.name, "id": self.id}
+    @staticmethod
+    def get_all():
+        results, _ = neomodel.db.cypher_query(
+            "MATCH (n:Character) RETURN n"
+        )
+        characters = []
+        for row in results:
+            characters.append(
+                {
+                    "name": row[0]["name"],
+                    "id": row[0]["id"],
+                }
+            )
+        return characters
+    
+    @staticmethod
+    def get(character_id: str):
+        results, _ = neomodel.db.cypher_query(
+            f"MATCH (n{{id:'{character_id}'}}) RETURN n"
+        )
+        return {
+            "name": results[0][0]["name"],
+            "id": results[0][0]["id"],
+        }
 
 
 def get_all():

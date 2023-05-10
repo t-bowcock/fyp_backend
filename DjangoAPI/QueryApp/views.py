@@ -11,36 +11,27 @@ from .models import Item, Trinket, Character, SynergyRel, InteractionRel, get_al
 def itemAPI(request, item_id: str = None):
     if request.method == "GET":
         if item_id is None:
-            items = []
-            for item in Item.nodes.all():
-                items.append(item.format())
-            return JsonResponse({"items": items})
+            return JsonResponse({"items": Item.get_all()})
 
-        return JsonResponse(Item.nodes.get(id=item_id).format())
+        return JsonResponse(Item.get(item_id))
 
 
 @csrf_exempt
 def trinketAPI(request, trinket_id: str = None):
     if request.method == "GET":
         if trinket_id is None:
-            trinkets = []
-            for trinket in Trinket.nodes.all():
-                trinkets.append(trinket.format())
-            return JsonResponse({"trinkets": trinkets})
+            return JsonResponse({"trinkets": Trinket.get_all()})
 
-        return JsonResponse(Trinket.nodes.get(id=trinket_id).format())
+        return JsonResponse(Trinket.get(trinket_id))
 
 
 @csrf_exempt
 def characterAPI(request, character_id: str = None):
     if request.method == "GET":
         if character_id is None:
-            characters = []
-            for character in Character.nodes.all():
-                characters.append(character.format())
-            return JsonResponse({"characters": characters})
+            return JsonResponse({"characters": Character.get_all()})
 
-        return JsonResponse(Character.nodes.get(id=character_id).format())
+        return JsonResponse(Character.get(character_id))
 
 
 @csrf_exempt
